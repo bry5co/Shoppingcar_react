@@ -1,12 +1,32 @@
 //Importar mi componente creado
 import Guitar from "./Components/Guitar"
 import Header from "./Components/Header"
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import { db } from "./data/db";
+
 
 function App() {
   //state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [data, setData] = useState([]);
+  const [cart, setCart] = useState([]);
   
+  /*Si fuera una consulta de una Api*/
+  useEffect(() => {
+    setData(db)
+  }, []);
+
+  function addToCart(item){
+    const itemExist= cart.findIndex((guitar) => guitar.id === item.id)
+    if (itemExist >= 0){
+      console.log("El elemento existe")
+    }else{
+      //setCart ya sabe el estado de cart por eso lo uso
+      setCart(prevCart => [...prevCart, item])
+      console.log(itemExist)
+      console.log(cart)
+    }
+  }
+
 
   return (
     //Aqui pego todo lo del html menos con la etiqueta html y body
@@ -18,7 +38,18 @@ function App() {
         <h2 className="text-center">Nuestra Colección</h2>
 
         <div className="row mt-5">
-          <Guitar/>
+          {data.map((guitar)=> (
+            /*Uso de props para renderizar*/
+            <Guitar
+              /*Key prop especial que debo usar cuando se 
+              itere sobre una lista*/
+              key={guitar.id}
+              guitar={guitar}
+              //Puedo pasarle tambien la funcion del setState
+              // setCart={setCart}
+              addToCart={addToCart}
+            />
+          ))}
         </div>
       </main>
 
