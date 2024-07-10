@@ -7,32 +7,48 @@ import { db } from "./data/db";
 
 function App() {
   //state
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(db);
   const [cart, setCart] = useState([]);
   
   /*Si fuera una consulta de una Api*/
-  useEffect(() => {
-    setData(db)
-  }, []);
+  // useEffect(() => {
+  //   setData(db)
+  // }, []);
 
   function addToCart(item){
-    const itemExist= cart.findIndex((guitar) => guitar.id === item.id)
+    const itemExist= cart.findIndex((guitar) => guitar.id === item.id);
     if (itemExist >= 0){
-      console.log("El elemento existe")
+      const updateCart=[...cart];
+      updateCart[itemExist].quantity++;
+      setCart(updateCart);
     }else{
+      //Agrego nuevo atributo, cantidad de atributos que quiero colocar
+      item.quantity = 1
       //setCart ya sabe el estado de cart por eso lo uso
-      setCart(prevCart => [...prevCart, item])
-      console.log(itemExist)
+      setCart([...cart, item])
       console.log(cart)
     }
   }
 
+  function removeElementFromCart(id){
+    /* Mi codiguito :(
+    const itemExist=cart.findIndex((guitar) => guitar.id === item.id);
+    if(itemExist >= 0){
+      const updateCart=[...cart];
+      updateCart.splice(itemExist, 1);
+      setCart(updateCart);
+    }*/
+    setCart(prevCart => prevCart.filter((guitar) => guitar.id !== id))
+  }
 
   return (
     //Aqui pego todo lo del html menos con la etiqueta html y body
     <>
       {/* Renderizar componente de header */}
-      <Header/>
+      <Header
+        cart={cart}
+        removeElementFromCart={removeElementFromCart}
+      />
       {/* Fin Renderizar componente de header */}
       <main className="container-xl mt-5">
         <h2 className="text-center">Nuestra Colección</h2>
